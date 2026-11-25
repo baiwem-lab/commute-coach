@@ -1,0 +1,553 @@
+{
+  "week": 1,
+  "title": "Week 1 — From a wave to an evoked response",
+  "levels": {"signal": 1, "english": 2},
+  "sessions": [
+    {
+      "id": "w01-s1",
+      "title": "Sampling: turning a smooth signal into numbers",
+      "concepts": ["sp.signal", "sp.sampling", "sp.nyquist"],
+      "warmup": [
+        {"id":"w01-s1-w1","type":"mcq","concept":"sp.sampling","level":1,
+         "q":"A recording lasts 2 seconds at 1000 Hz. How many samples does it contain?",
+         "options":[
+           {"t":"1000","why":"That is the number of samples in 1 second."},
+           {"t":"2000","why":"Right: 1000 samples per second × 2 seconds."},
+           {"t":"500","why":"That would be 2 s at 250 Hz."},
+           {"t":"2","why":"That would be 1 sample per second."}],
+         "answer":1,"explain":"Number of samples = duration × sampling rate."},
+        {"id":"w01-s1-w2","type":"mcq","concept":"sp.signal","level":1,
+         "q":"Inside the computer, one iEEG channel is stored as…",
+         "options":[
+           {"t":"a continuous curve","why":"Computers can only store a finite list of numbers, not a truly continuous curve."},
+           {"t":"a list of voltage values, one per sample time","why":"Right: a time series. The curve you see is drawn by joining these points."},
+           {"t":"a list of frequencies","why":"Frequencies come later, from analysis (e.g. Fourier). The raw data is voltage over time."},
+           {"t":"a picture of the wave","why":"The display is drawn from numbers; the data itself is numbers."}],
+         "answer":1,"explain":"Raw data = voltage values at regular time points."}
+      ],
+      "lesson": {
+        "title": "Sampling",
+        "simple": [
+          "The voltage at an electrode changes smoothly all the time. A computer cannot store \"all the time\", so it takes snapshots: it measures the voltage at regular moments. Each snapshot is a <b>sample</b>.",
+          "The <b>sampling rate</b> (written fs) is how many snapshots per second, in hertz (Hz). 1000 Hz = 1000 samples per second = one sample every 1 ms. In general: time between samples = 1 / fs.",
+          "Play with the slider. With many samples, the dots trace the wave well. With too few, the dots join into a slower wave that is <i>not really there</i>. This fake slow wave is called <b>aliasing</b>."
+        ],
+        "visual": {"kind":"sampling","f":6,"fs":60,"sliders":["fs"]},
+        "precise": "To represent a frequency f without aliasing, you need fs > 2f. The limit fs/2 is the <b>Nyquist frequency</b>. Frequencies above it do not disappear: they fold back to lower frequencies. That is why recording systems apply a low-pass (anti-aliasing) filter <i>before</i> sampling.",
+        "takeaway": "Sampling rate = snapshots per second. Too few snapshots create fake slow waves (aliasing)."
+      },
+      "practice": [
+        {"id":"w01-s1-p1","type":"predict","concept":"sp.nyquist","level":2,
+         "q":"Predict, then check with the slider (set fs to 8 Hz). A 6 Hz wave sampled at 8 Hz: what frequency do the dots appear to show?",
+         "options":[
+           {"t":"6 Hz","why":"8 Hz sampling is less than 2 × 6 = 12 Hz, so 6 Hz cannot be shown correctly."},
+           {"t":"2 Hz","why":"Right: the wave folds back to fs − f = 8 − 6 = 2 Hz."},
+           {"t":"8 Hz","why":"The sampling rate itself never appears as a wave in the data."},
+           {"t":"14 Hz","why":"Sampled data cannot show anything above fs/2 = 4 Hz."}],
+         "answer":1,"explain":"When f is between fs/2 and fs, the alias appears at fs − f."},
+        {"id":"w01-s1-p2","type":"mcq","concept":"sp.nyquist","level":2,
+         "q":"Your iEEG system samples at 512 Hz. What is the highest frequency you can analyse, in principle?",
+         "options":[
+           {"t":"512 Hz","why":"You need more than 2 samples per cycle, so the limit is half of 512."},
+           {"t":"1024 Hz","why":"Sampling never lets you see above the sampling rate."},
+           {"t":"256 Hz","why":"Right: the Nyquist frequency is 512 / 2 = 256 Hz."},
+           {"t":"128 Hz","why":"That is a comfortable safe zone (fs/4), but not the theoretical limit."}],
+         "answer":2,"explain":"Nyquist = fs / 2. In practice, stay a bit below it."},
+        {"id":"w01-s1-p3","type":"mcq","concept":"sp.nyquist","level":2,
+         "q":"Spot the error. A student writes: \"We sampled at 250 Hz, so we can study high-gamma activity (70–150 Hz).\" What is wrong?",
+         "options":[
+           {"t":"Nothing, 250 Hz is above 150 Hz","why":"The rule compares the frequency to fs/2, not to fs."},
+           {"t":"Part of the band (above 125 Hz) is above the Nyquist frequency","why":"Right: fs/2 = 125 Hz, so 125–150 Hz cannot be represented."},
+           {"t":"High gamma cannot be recorded with iEEG","why":"iEEG is actually very good for high gamma; the problem is the sampling rate."},
+           {"t":"The sampling rate should be exactly 150 Hz","why":"Sampling at 150 Hz would make it worse: the limit would be 75 Hz."}],
+         "answer":1,"explain":"Check every frequency of interest against fs/2, ideally with margin."}
+      ],
+      "english": {
+        "text": "Signals were sampled at 1 kHz and subsequently downsampled to 500 Hz, which, notwithstanding a modest loss of high-frequency content, was deemed sufficient for the analyses reported here.",
+        "q": [
+          {"id":"w01-s1-e1","type":"mcq","concept":"en.hedge","level":2,
+           "q":"Which phrase shows that this is the authors' judgment, not a proven fact?",
+           "options":[
+             {"t":"\"subsequently downsampled\"","why":"This just describes what was done, in which order."},
+             {"t":"\"was deemed sufficient\"","why":"Right: \"to deem\" = to judge. The authors decided it was enough."},
+             {"t":"\"sampled at 1 kHz\"","why":"This is a factual description of the recording."},
+             {"t":"\"reported here\"","why":"This only points to the analyses in the paper."}],
+           "answer":1,"explain":"\"Deemed\" signals an evaluation by the authors. A reviewer could disagree."},
+          {"id":"w01-s1-e2","type":"mcq","concept":"en.claim","level":1,
+           "q":"\"Notwithstanding a modest loss of high-frequency content\" means…",
+           "options":[
+             {"t":"because there was no loss","why":"The phrase admits there was a loss."},
+             {"t":"despite losing some high-frequency content","why":"Right: notwithstanding = despite."},
+             {"t":"in order to lose high frequencies","why":"The loss is a side effect, not the goal."},
+             {"t":"except for high frequencies, nothing changed","why":"Close, but the key meaning is the concession: \"despite\"."}],
+           "answer":1,"explain":"Notwithstanding X = despite X. The authors admit a cost, then defend their choice."}
+        ],
+        "note": "Link to today: at 500 Hz, the Nyquist frequency is 250 Hz, so activity above 250 Hz is lost. That is the \"high-frequency content\"."
+      },
+      "explain": {"id":"w01-s1-x","type":"open","concept":"sp.sampling",
+        "q":"In your own words: what is the sampling rate, and what goes wrong if it is too low? (2–4 sentences)"}
+    },
+
+    {
+      "id": "w01-s2",
+      "title": "Frequency, amplitude, phase: anatomy of a sine wave",
+      "concepts": ["sp.frequency", "sp.sine"],
+      "warmup": [
+        {"id":"w01-s2-w1","type":"mcq","concept":"sp.sampling","level":1,
+         "q":"At 2000 Hz, how much time passes between two samples?",
+         "options":[
+           {"t":"2 ms","why":"That is the gap at 500 Hz."},
+           {"t":"0.5 ms","why":"Right: 1 / 2000 s = 0.0005 s = 0.5 ms."},
+           {"t":"20 ms","why":"That is the gap at 50 Hz."},
+           {"t":"2 s","why":"That is 0.5 Hz."}],
+         "answer":1,"explain":"Time between samples = 1 / fs."},
+        {"id":"w01-s2-w2","type":"mcq","concept":"sp.nyquist","level":2,
+         "q":"At fs = 1000 Hz, what is the Nyquist frequency?",
+         "options":[
+           {"t":"1000 Hz","why":"That is the sampling rate itself."},
+           {"t":"2000 Hz","why":"The Nyquist frequency is half the sampling rate, not double."},
+           {"t":"500 Hz","why":"Right: fs / 2."},
+           {"t":"250 Hz","why":"That is fs/4."}],
+         "answer":2,"explain":"Nyquist = fs / 2."}
+      ],
+      "lesson": {
+        "title": "The sine wave",
+        "simple": [
+          "A sine wave is the simplest rhythm: it goes up and down smoothly and regularly. Three numbers describe it completely.",
+          "<b>Frequency</b> (Hz): how many full cycles per second. <b>Period</b>: how long one cycle lasts. They are linked: period = 1 / frequency. 10 Hz → 100 ms per cycle.",
+          "<b>Amplitude</b>: how high the peaks are (in µV for brain signals). <b>Phase</b>: where in its cycle the wave is at time 0 (in degrees, 0–360°). A 180° shift flips the wave upside down.",
+          "Brain rhythms are named by frequency: delta (below 4 Hz), theta (4–8), alpha (8–12), beta (about 13–30), gamma (above 30). Use the sliders to see each one."
+        ],
+        "visual": {"kind":"sine","f":10,"a":1,"phase":0,"sliders":["f","a","phase"]},
+        "precise": "Band limits differ slightly between papers (check each paper's methods). Real brain rhythms are not perfect sines: they come in bursts, drift in frequency, and can have non-sinusoidal shapes. Sines are the <i>building blocks used for analysis</i>, not a literal description of neurons.",
+        "takeaway": "Frequency = speed, amplitude = height, phase = starting point. Period = 1 / frequency."
+      },
+      "practice": [
+        {"id":"w01-s2-p1","type":"mcq","concept":"sp.frequency","level":1,
+         "q":"Look at the figure. How many full cycles happen in 1 second? So what is the frequency?",
+         "figure": {"kind":"sine","f":4,"a":1,"phase":0},
+         "options":[
+           {"t":"2 Hz","why":"Count the peaks between 0 and 1000 ms: there are more than 2."},
+           {"t":"4 Hz","why":"Right: 4 peaks (4 full cycles) in 1000 ms."},
+           {"t":"8 Hz","why":"You may have counted peaks and troughs. A cycle = one peak + one trough."},
+           {"t":"250 Hz","why":"250 is the period in ms (1000/4), not the frequency."}],
+         "answer":1,"explain":"Count full cycles in 1 s. Careful not to count peaks and troughs separately."},
+        {"id":"w01-s2-p2","type":"mcq","concept":"sp.frequency","level":1,
+         "q":"A wave completes 5 full cycles in 500 ms. What is its frequency?",
+         "options":[
+           {"t":"5 Hz","why":"5 cycles in half a second = 10 cycles in a full second."},
+           {"t":"10 Hz","why":"Right: 5 cycles / 0.5 s = 10 Hz (alpha range)."},
+           {"t":"100 Hz","why":"100 is the period in ms (500/5), not the frequency."},
+           {"t":"2.5 Hz","why":"That would be 5 cycles in 2 s."}],
+         "answer":1,"explain":"Frequency = cycles / seconds. Convert ms to s first."},
+        {"id":"w01-s2-p3","type":"mcq","concept":"sp.frequency","level":1,
+         "q":"What is the period of a 40 Hz gamma oscillation?",
+         "options":[
+           {"t":"40 ms","why":"That is the period of a 25 Hz wave."},
+           {"t":"25 ms","why":"Right: 1000 ms / 40 = 25 ms."},
+           {"t":"4 ms","why":"That is the period of a 250 Hz wave."},
+           {"t":"400 ms","why":"That is the period of a 2.5 Hz wave."}],
+         "answer":1,"explain":"Period (ms) = 1000 / frequency (Hz)."},
+        {"id":"w01-s2-p4","type":"predict","concept":"sp.sine","level":1,
+         "q":"Predict, then test with the phase slider. Two 10 Hz waves with the same amplitude, one shifted by 180°. How do they look side by side?",
+         "options":[
+           {"t":"Identical","why":"Identical waves have a 0° (or 360°) shift."},
+           {"t":"Mirror images: one is at a peak when the other is at a trough","why":"Right: 180° is half a cycle, which flips the wave."},
+           {"t":"One is twice as fast","why":"Phase changes timing, not frequency."},
+           {"t":"One is twice as tall","why":"Phase does not change amplitude."}],
+         "answer":1,"explain":"180° = half a cycle = upside-down version of the same wave."}
+      ],
+      "english": {
+        "text": "Increased alpha-band power over occipital sites may reflect, at least in part, a functional inhibition of task-irrelevant regions.",
+        "q": [
+          {"id":"w01-s2-e1","type":"mcq","concept":"en.hedge","level":2,
+           "q":"Which words soften (hedge) the claim?",
+           "options":[
+             {"t":"\"increased\" and \"occipital\"","why":"These describe the observation, not the strength of the claim."},
+             {"t":"\"may\" and \"at least in part\"","why":"Right: \"may\" = possibly; \"at least in part\" = maybe not the whole explanation."},
+             {"t":"\"functional\" and \"task-irrelevant\"","why":"These describe the proposed mechanism; they don't weaken it."},
+             {"t":"There is no hedging","why":"Compare with \"reflects inhibition\": the original is clearly weaker."}],
+           "answer":1,"explain":"Hedges show how sure the authors are. Here: a plausible interpretation, not a demonstration."},
+          {"id":"w01-s2-e2","type":"mcq","concept":"en.claim","level":2,
+           "q":"Which part is the observation, and which is the interpretation?",
+           "options":[
+             {"t":"Observation: inhibition of regions. Interpretation: alpha power.","why":"Reversed: power is measured; inhibition is inferred."},
+             {"t":"Observation: more alpha power over occipital sites. Interpretation: functional inhibition.","why":"Right: you can measure power; \"inhibition\" is a hypothesis about what it means."},
+             {"t":"Both are observations","why":"Inhibition is not directly measured in this sentence."},
+             {"t":"Both are interpretations","why":"Increased alpha power is a measurement."}],
+           "answer":1,"explain":"Always separate what was measured from what it is said to mean."}
+        ],
+        "note": "Content note: \"alpha = inhibition\" is a popular and influential hypothesis, but it is still debated (consensus: alpha power changes with attention; debated: what mechanism it reflects)."
+      },
+      "explain": {"id":"w01-s2-x","type":"open","concept":"sp.sine",
+        "q":"Explain frequency, amplitude and phase in your own words, with one example from brain signals."}
+    },
+
+    {
+      "id": "w01-s3",
+      "title": "Adding signals: what one electrode really records",
+      "concepts": ["sp.superposition"],
+      "warmup": [
+        {"id":"w01-s3-w1","type":"mcq","concept":"sp.frequency","level":1,
+         "q":"What is the period of a 4 Hz wave?",
+         "options":[
+           {"t":"4 ms","why":"That is the period of a 250 Hz wave."},
+           {"t":"250 ms","why":"Right: 1000 / 4 = 250 ms."},
+           {"t":"25 ms","why":"That is the period of 40 Hz."},
+           {"t":"400 ms","why":"That is the period of 2.5 Hz."}],
+         "answer":1,"explain":"Period (ms) = 1000 / f."},
+        {"id":"w01-s3-w2","type":"mcq","concept":"sp.sine","level":1,
+         "q":"An oscillation at 10 Hz belongs to which band?",
+         "options":[
+           {"t":"Delta","why":"Delta is below 4 Hz."},
+           {"t":"Theta","why":"Theta is about 4–8 Hz."},
+           {"t":"Alpha","why":"Right: alpha is about 8–12 Hz."},
+           {"t":"Gamma","why":"Gamma is above about 30 Hz."}],
+         "answer":2,"explain":"Delta < 4 · theta 4–8 · alpha 8–12 · beta ~13–30 · gamma > 30 Hz."},
+        {"id":"w01-s3-w3","type":"mcq","concept":"sp.nyquist","level":2,
+         "q":"A 6 Hz wave sampled at 8 Hz appears at…",
+         "options":[
+           {"t":"6 Hz","why":"8 Hz is below 2 × 6, so 6 Hz can't be shown correctly."},
+           {"t":"2 Hz","why":"Right: fs − f = 2 Hz (aliasing)."},
+           {"t":"14 Hz","why":"Nothing above fs/2 = 4 Hz can appear."},
+           {"t":"0 Hz","why":"The wave does not vanish; it folds back."}],
+         "answer":1,"explain":"Alias at fs − f when f is between fs/2 and fs."}
+      ],
+      "lesson": {
+        "title": "Superposition",
+        "simple": [
+          "An electrode does not listen to one source. It records the <b>sum</b> of everything active nearby, at every time point. Adding signals = adding their values point by point. This is called <b>superposition</b>.",
+          "Same frequency, same phase → the waves add up into a bigger wave (<b>constructive</b> interference). Same frequency, opposite phase (180°) → they cancel (<b>destructive</b>).",
+          "Different frequencies → a more complex shape, for example a slow wave with fast ripples riding on top. Try it: move the second wave's frequency and phase.",
+          "Big idea: complex signals can be <i>built</i> from simple sine waves. Next weeks, we will do the reverse: take a complex signal apart into sines. That is what Fourier analysis does."
+        ],
+        "visual": {"kind":"sum","f1":5,"a1":1,"f2":20,"a2":0.5,"phase2":0,"sliders":["f2","a2","phase2"]},
+        "precise": "Fourier's theorem: a signal over a finite window can be written as a sum of sines, each with its own frequency, amplitude and phase. For electrodes, each source contributes with a weight that depends on its distance and orientation (volume conduction), so the sum is weighted, not equal.",
+        "takeaway": "One electrode = sum of many sources. Sums can grow, cancel, or make complex shapes."
+      },
+      "practice": [
+        {"id":"w01-s3-p1","type":"predict","concept":"sp.superposition","level":1,
+         "q":"Predict: a 5 Hz wave + another 5 Hz wave, same amplitude, same phase. What is the sum?",
+         "options":[
+           {"t":"A 10 Hz wave","why":"Adding does not change the frequency of identical waves."},
+           {"t":"A 5 Hz wave with twice the amplitude","why":"Right: constructive interference."},
+           {"t":"A flat line","why":"That happens with opposite phases (180°)."},
+           {"t":"A 2.5 Hz wave","why":"Adding cannot slow the wave down here."}],
+         "answer":1,"explain":"In phase → amplitudes add."},
+        {"id":"w01-s3-p2","type":"mcq","concept":"sp.superposition","level":1,
+         "q":"A large 4 Hz wave + a small 40 Hz wave. What does the sum look like?",
+         "options":[
+           {"t":"A pure 22 Hz wave","why":"Frequencies are not averaged: both components remain."},
+           {"t":"A slow wave with small fast ripples on top","why":"Right: the slow wave sets the shape, the fast one adds wiggles."},
+           {"t":"A flat line","why":"Different frequencies cannot cancel everywhere."},
+           {"t":"A fast wave with a small slow ripple","why":"The 4 Hz wave is the large one here, so it dominates the shape."}],
+         "answer":1,"explain":"Mixtures keep each component; amplitude decides which dominates visually."},
+        {"id":"w01-s3-p3","type":"predict","concept":"sp.superposition","level":2,
+         "q":"Predict, then test with the sliders (wave 2 at 6 Hz, amplitude 1). 5 Hz + 6 Hz, equal amplitude: what appears?",
+         "options":[
+           {"t":"A steady 5.5 Hz wave","why":"Look at the envelope: the size does not stay steady."},
+           {"t":"A wave whose size grows and shrinks once per second","why":"Right: the two waves drift in and out of phase every second (\"beats\", at 6 − 5 = 1 Hz)."},
+           {"t":"Complete cancellation","why":"They only cancel at the moments they are in opposite phase."},
+           {"t":"An 11 Hz wave","why":"Frequencies don't simply add."}],
+         "answer":1,"explain":"Close frequencies → beats at the difference frequency."},
+        {"id":"w01-s3-p4","type":"mcq","concept":"sp.superposition","level":2,
+         "q":"Challenge your links. A student says: \"This electrode shows a 4 Hz rhythm with 40 Hz ripples, so both rhythms come from the same neurons.\" What's the best reply?",
+         "options":[
+           {"t":"Correct: one electrode = one neural population","why":"An electrode sums many sources."},
+           {"t":"Plausible, but the recording is a sum: the two rhythms could come from different sources. Which evidence supports a common origin?","why":"Right: co-occurrence in the sum is not evidence of a common source."},
+           {"t":"Wrong: 40 Hz can't be recorded with 4 Hz","why":"Both can be present in the same recording."},
+           {"t":"Correct, because 40 is a multiple of 4","why":"A numerical ratio does not show a shared origin."}],
+         "answer":1,"explain":"Seeing two things together in a sum ≠ one shared cause."}
+      ],
+      "english": {
+        "text": "Figure 2. (A) Simulated signal composed of a 6 Hz and a 40 Hz component. (B) Same signal after the addition of broadband noise. Note that the 40 Hz component, although clearly visible in A, is largely obscured in B.",
+        "q": [
+          {"id":"w01-s3-e1","type":"mcq","concept":"en.caption","level":2,
+           "q":"Which panel would you look at to check that the signal really contains 40 Hz?",
+           "options":[
+             {"t":"Panel A","why":"Right: the caption says the 40 Hz component is clearly visible there."},
+             {"t":"Panel B","why":"In B, the 40 Hz component is largely obscured by noise."},
+             {"t":"Neither","why":"The caption says A shows it clearly."},
+             {"t":"Both equally","why":"The point of the figure is that they differ."}],
+           "answer":0,"explain":"Captions tell you which panel carries which point."},
+          {"id":"w01-s3-e2","type":"mcq","concept":"en.claim","level":2,
+           "q":"\"Largely obscured\" means the 40 Hz component in B is…",
+           "options":[
+             {"t":"completely removed","why":"\"Largely\" means mostly, not completely; and noise hides, it doesn't remove."},
+             {"t":"mostly hidden, but still present","why":"Right: obscured = hidden; largely = mostly."},
+             {"t":"made larger","why":"\"Largely\" is about degree, not size."},
+             {"t":"made clearer","why":"Obscured means the opposite."}],
+           "answer":1,"explain":"The component is still in the data; noise just hides it. Remember this for next session!"}
+        ],
+        "note": "\"Broadband noise\" = noise spread over many frequencies (not a single peak like line noise)."
+      },
+      "explain": {"id":"w01-s3-x","type":"open","concept":"sp.superposition",
+        "q":"Why can one electrode show a complicated wave even if each source is a simple rhythm? (2–4 sentences)"}
+    },
+
+    {
+      "id": "w01-s4",
+      "title": "Noise and signal-to-noise ratio",
+      "concepts": ["sp.noise"],
+      "warmup": [
+        {"id":"w01-s4-w1","type":"mcq","concept":"sp.superposition","level":1,
+         "q":"Two identical 10 Hz waves, shifted by 180°, are added. Result?",
+         "options":[
+           {"t":"Double amplitude","why":"That is for 0° shift."},
+           {"t":"Flat line","why":"Right: destructive interference."},
+           {"t":"20 Hz wave","why":"Frequency does not change."},
+           {"t":"5 Hz wave","why":"Frequency does not change."}],
+         "answer":1,"explain":"Opposite phase → cancellation."},
+        {"id":"w01-s4-w2","type":"mcq","concept":"sp.sampling","level":1,
+         "q":"You sample at 250 Hz. Time between samples?",
+         "options":[
+           {"t":"4 ms","why":"Right: 1000 / 250 = 4 ms."},
+           {"t":"250 ms","why":"That would be 4 Hz sampling."},
+           {"t":"25 ms","why":"That would be 40 Hz sampling."},
+           {"t":"0.4 ms","why":"That would be 2500 Hz sampling."}],
+         "answer":0,"explain":"Gap (ms) = 1000 / fs."}
+      ],
+      "lesson": {
+        "title": "Noise",
+        "simple": [
+          "<b>Noise</b> is everything in the recording that is not what you want to study: other brain activity, muscle activity, mains electricity (<b>line noise</b>, 50 Hz in Europe), amplifier noise.",
+          "Superposition again: <b>recording = signal + noise</b>. The noise doesn't replace the signal; it is added on top and can hide it.",
+          "<b>Signal-to-noise ratio (SNR)</b>: how big the signal is compared to the noise. High SNR: easy to see. Low SNR: hidden. Move the slider and find the noise level where you can no longer see the wave.",
+          "A single-trial evoked response is often smaller than the ongoing background activity, so its SNR is low. Tomorrow: the trick to fix that."
+        ],
+        "visual": {"kind":"noise","f":5,"noise":0.5,"sliders":["noise"]},
+        "precise": "SNR is usually defined as a ratio of <i>power</i> (amplitude squared), often in decibels: 10·log10(P_signal / P_noise). \"Noise\" depends on the question: ongoing alpha is noise for an ERP study and signal for an alpha study. Structured noise (like a 50 Hz line) can often be removed by a filter; random broadband noise in the same frequencies as your signal cannot be filtered away.",
+        "takeaway": "Recording = signal + noise. SNR = how much the signal stands out."
+      },
+      "practice": [
+        {"id":"w01-s4-p1","type":"mcq","concept":"sp.noise","level":1,
+         "q":"A recording in Grenoble shows a narrow, constant peak at 50 Hz in every channel. Most likely cause?",
+         "options":[
+           {"t":"A gamma oscillation","why":"A brain rhythm would rarely be exactly 50 Hz, constant, and in every channel."},
+           {"t":"Line noise from mains electricity","why":"Right: 50 Hz is the European mains frequency."},
+           {"t":"Aliasing of 10 Hz","why":"Aliasing creates lower, not higher, frequencies."},
+           {"t":"Muscle activity","why":"Muscle noise is broadband (many frequencies), not one narrow peak."}],
+         "answer":1,"explain":"Narrow + constant + everywhere + 50 Hz = line noise."},
+        {"id":"w01-s4-p2","type":"mcq","concept":"sp.noise","level":1,
+         "q":"The signal stays the same, but the noise amplitude doubles. The SNR (as an amplitude ratio)…",
+         "options":[
+           {"t":"doubles","why":"More noise makes the ratio smaller, not bigger."},
+           {"t":"halves","why":"Right: signal / (2 × noise) = half the previous ratio."},
+           {"t":"stays the same","why":"The ratio depends on the noise, which changed."},
+           {"t":"is divided by 4","why":"That would be true for a power ratio (amplitude squared), not an amplitude ratio."}],
+         "answer":1,"explain":"Amplitude SNR = signal / noise. (In power: divided by 4. See the precise version.)"},
+        {"id":"w01-s4-p3","type":"mcq","concept":"sp.noise","level":2,
+         "q":"In a study of evoked potentials, the ongoing alpha rhythm in the background is…",
+         "options":[
+           {"t":"always signal, because it is brain activity","why":"Being neural doesn't make it the signal of interest."},
+           {"t":"noise for this question","why":"Right: noise is defined relative to the question."},
+           {"t":"an artefact","why":"An artefact is non-brain or technical; alpha is genuine brain activity."},
+           {"t":"impossible to record at the same time","why":"Both are recorded together and add up."}],
+         "answer":1,"explain":"Signal vs noise is about your question, not about the source."},
+        {"id":"w01-s4-p4","type":"mcq","concept":"sp.noise","level":2,
+         "q":"Why do iEEG contacts often show clearer local responses than scalp EEG?",
+         "options":[
+           {"t":"They sample faster","why":"Sampling rate does not set the SNR of a local response."},
+           {"t":"They are close to the source, without skull and scalp spreading the signal","why":"Right: bigger local signal and less mixing with distant sources."},
+           {"t":"There is no noise inside the brain","why":"Other brain activity is still there and still counts as noise."},
+           {"t":"They don't need a reference","why":"iEEG still needs a reference (topic for a later week)."}],
+         "answer":1,"explain":"Distance and tissue between source and sensor shape SNR."}
+      ],
+      "english": {
+        "text": "Trials contaminated by artefacts exceeding ±150 µV were excluded, resulting in the rejection of 12% of trials on average (range: 3–27%).",
+        "q": [
+          {"id":"w01-s4-e1","type":"mcq","concept":"en.methods","level":2,
+           "q":"What does \"(range: 3–27%)\" tell you?",
+           "options":[
+             {"t":"Between 3 and 27 trials were rejected","why":"The numbers are percentages, not trial counts."},
+             {"t":"The participant (or recording) with the fewest rejections lost 3%, the one with the most lost 27%","why":"Right: the range shows the spread behind the 12% average."},
+             {"t":"12% is wrong","why":"An average of 12% fits easily within 3–27%."},
+             {"t":"Artefacts were between 3 and 27 µV","why":"The threshold was ±150 µV; the range refers to rejected trials."}],
+           "answer":1,"explain":"Averages hide spread. A reader should wonder: does 27% rejection bias that participant's data?"},
+          {"id":"w01-s4-e2","type":"mcq","concept":"en.methods","level":2,
+           "q":"Which trials were excluded?",
+           "options":[
+             {"t":"All trials with amplitude below 150 µV","why":"Reversed: the threshold catches big values."},
+             {"t":"Trials where the artefact went beyond +150 or −150 µV","why":"Right: \"exceeding ±150 µV\" = above +150 or below −150."},
+             {"t":"12% of trials chosen at random","why":"Rejection was based on a threshold, not random."},
+             {"t":"Trials with any noise","why":"Only large artefacts beyond the threshold."}],
+           "answer":1,"explain":"\"±\" = plus or minus: both directions count."}
+        ],
+        "note": "Spelling: \"artefact\" (UK) = \"artifact\" (US). Both are correct; be consistent in your own writing."
+      },
+      "explain": {"id":"w01-s4-x","type":"open","concept":"sp.noise",
+        "q":"Define noise and SNR in your own words. Give one example where the same activity is signal in one study and noise in another."}
+    },
+
+    {
+      "id": "w01-s5",
+      "title": "Averaging trials: making the evoked response appear",
+      "concepts": ["sp.averaging", "sp.erp"],
+      "warmup": [
+        {"id":"w01-s5-w1","type":"mcq","concept":"sp.noise","level":1,
+         "q":"Recording = ?",
+         "options":[
+           {"t":"Signal only, after the amplifier removes noise","why":"Amplifiers add some noise; they don't remove it all."},
+           {"t":"Signal + noise, added point by point","why":"Right: superposition."},
+           {"t":"Signal × noise","why":"For our purposes, noise adds; it does not multiply."},
+           {"t":"Noise only, the signal is computed later","why":"The signal is in the recording, hidden among the noise."}],
+         "answer":1,"explain":"Recording = signal + noise."},
+        {"id":"w01-s5-w2","type":"mcq","concept":"sp.noise","level":1,
+         "q":"Which is a typical source of structured (non-random) noise?",
+         "options":[
+           {"t":"50 Hz line noise","why":"Right: a fixed, predictable frequency."},
+           {"t":"Amplifier thermal noise","why":"That noise is random and broadband."},
+           {"t":"The evoked response","why":"That's usually the signal of interest."},
+           {"t":"Sampling rate","why":"A sampling rate is a setting, not noise."}],
+         "answer":0,"explain":"Structured noise has a predictable form, which makes it easier to remove."}
+      ],
+      "lesson": {
+        "title": "Averaging",
+        "simple": [
+          "Problem: one trial's response is hidden in noise. Trick: show the stimulus many times. Cut the recording around each stimulus (each piece is an <b>epoch</b>), align them on stimulus onset (time 0), and average them point by point.",
+          "The response is <b>time-locked</b>: same shape, same time on every trial, so it stays. The noise is random: positive on some trials, negative on others, so it cancels out and shrinks.",
+          "Rule of thumb: noise in the average shrinks with √N. 4× more trials → noise halves. Use the slider and watch the true response (dashed) appear.",
+          "The result is an <b>evoked potential</b>. Its bumps are called <b>deflections</b>. Describe each one by <b>polarity</b> (positive/negative), <b>latency</b> (ms after the stimulus) and <b>amplitude</b> (µV)."
+        ],
+        "visual": {"kind":"average","trials":1,"noise":3,"sliders":["trials"]},
+        "precise": "The √N rule assumes noise is independent across trials with zero mean, and the response is identical on every trial. If latency jitters, the average gets smaller and wider. Activity that is not phase-locked to the stimulus (induced oscillations) averages out even if it is real, so you need time-frequency analysis on single trials to see it. The polarity of a deflection also depends on the reference and the electrode's position relative to the source.",
+        "takeaway": "Time-locked signal stays, random noise shrinks by √N. Bumps = deflections: polarity, latency, amplitude."
+      },
+      "practice": [
+        {"id":"w01-s5-p1","type":"mcq","concept":"sp.averaging","level":2,
+         "q":"You have 25 trials. How many do you need to halve the noise in the average?",
+         "options":[
+           {"t":"50","why":"Doubling trials only reduces noise by √2 ≈ 1.4."},
+           {"t":"100","why":"Right: 4× more trials → √4 = 2× less noise."},
+           {"t":"625","why":"That would divide the noise by 5 compared with 25 trials."},
+           {"t":"12","why":"Fewer trials increase the noise in the average."}],
+         "answer":1,"explain":"Noise ∝ 1/√N. To halve it, multiply N by 4."},
+        {"id":"w01-s5-p2","type":"mcq","concept":"sp.erp","level":2,
+         "q":"Look at this average of 100 trials (positive up). Describe the first deflection.",
+         "figure": {"kind":"average","trials":100,"noise":3,"seed":7},
+         "options":[
+           {"t":"Positive, around 200 ms","why":"That is the second deflection. Look earlier."},
+           {"t":"Negative, around 100 ms","why":"Right: the first clear bump goes down and peaks near 100 ms."},
+           {"t":"Negative, around 0 ms","why":"At 0 ms the stimulus just appeared; the response comes later."},
+           {"t":"There is no clear deflection","why":"With 100 trials, the noise is small enough to see the bumps."}],
+         "answer":1,"explain":"Polarity + latency (+ amplitude) describe a deflection."},
+        {"id":"w01-s5-p3","type":"predict","concept":"sp.averaging","level":3,
+         "q":"Predict: the response latency varies randomly by about ±50 ms from trial to trial. The averaged deflection will be…",
+         "options":[
+           {"t":"identical to a single trial","why":"Misaligned peaks don't add up perfectly."},
+           {"t":"smaller and wider than the single-trial response","why":"Right: peaks at different times are smeared across time."},
+           {"t":"larger and sharper","why":"Jitter can only blur, not sharpen."},
+           {"t":"exactly zero","why":"Some overlap remains, so a reduced, broad bump survives."}],
+         "answer":1,"explain":"Latency jitter: the average underestimates the single-trial amplitude."},
+        {"id":"w01-s5-p4","type":"mcq","concept":"sp.averaging","level":3,
+         "q":"After each stimulus, a gamma burst appears, but at a random phase. In the averaged evoked potential, it…",
+         "options":[
+           {"t":"stays clearly visible","why":"Random phase means peaks and troughs cancel across trials."},
+           {"t":"mostly disappears, even though it's real","why":"Right: it is induced, not phase-locked, activity."},
+           {"t":"becomes a slow wave","why":"Averaging does not change frequency."},
+           {"t":"doubles","why":"Averaging cannot amplify beyond a single trial."}],
+         "answer":1,"explain":"Absence in the average ≠ absence in the brain."}
+      ],
+      "english": {
+        "text": "Although the late component did not reach significance, its topography was consistent with a parietal generator, a possibility that warrants further investigation.",
+        "q": [
+          {"id":"w01-s5-e1","type":"mcq","concept":"en.hedge","level":2,
+           "q":"Do the authors claim that the late component comes from parietal cortex?",
+           "options":[
+             {"t":"Yes, clearly","why":"\"Consistent with\" and \"a possibility\" are much weaker than a claim."},
+             {"t":"No: they say it fits a parietal source, as a possibility to test","why":"Right: two hedges, \"consistent with\" and \"a possibility\"."},
+             {"t":"No: they say it is not parietal","why":"They suggest parietal is possible, not excluded."},
+             {"t":"Yes, because it was significant","why":"The sentence says it did not reach significance."}],
+           "answer":1,"explain":"\"Consistent with\" = compatible, not proven."},
+          {"id":"w01-s5-e2","type":"mcq","concept":"en.claim","level":2,
+           "q":"What does \"warrants further investigation\" mean?",
+           "options":[
+             {"t":"Has been confirmed","why":"It asks for more work precisely because it is not confirmed."},
+             {"t":"Deserves to be studied more","why":"Right: to warrant = to justify or deserve."},
+             {"t":"Is forbidden to study","why":"The opposite."},
+             {"t":"Was investigated by the police","why":"A warrant is also a legal document, but not in this sense."}],
+           "answer":1,"explain":"A polite way to say: we don't know yet."}
+        ],
+        "note": "When you read a \"null + interesting\" sentence like this, ask: would I believe it if the result went the other way?"
+      },
+      "explain": {"id":"w01-s5-x","type":"open","concept":"sp.averaging",
+        "q":"Explain to a first-year student why averaging 100 trials reveals a response invisible in one trial. Mention one situation where averaging fails."}
+    }
+  ],
+
+  "checkup": {
+    "id": "w01-check",
+    "title": "Week 1 check-up",
+    "intro": "About 15–20 minutes, optional. Mixed questions from the whole week, then one longer explanation. Reminder: tap \"Backup progress\" on the Progress screen and save the code somewhere safe.",
+    "questions": [
+      {"id":"w01-c1","type":"mcq","concept":"sp.sampling","level":1,
+       "q":"fs = 250 Hz. Time between samples?",
+       "options":[
+         {"t":"4 ms","why":"Right: 1000/250."},
+         {"t":"2.5 ms","why":"That is 400 Hz."},
+         {"t":"25 ms","why":"That is 40 Hz."},
+         {"t":"250 ms","why":"That is 4 Hz."}],
+       "answer":0,"explain":"Gap = 1/fs."},
+      {"id":"w01-c2","type":"mcq","concept":"sp.nyquist","level":2,
+       "q":"fs = 250 Hz. Nyquist frequency?",
+       "options":[
+         {"t":"500 Hz","why":"Nyquist is half fs, not double."},
+         {"t":"250 Hz","why":"That is fs itself."},
+         {"t":"125 Hz","why":"Right: fs/2."},
+         {"t":"62.5 Hz","why":"That is fs/4."}],
+       "answer":2,"explain":"Nyquist = fs/2."},
+      {"id":"w01-c3","type":"mcq","concept":"sp.nyquist","level":2,
+       "q":"A 90 Hz oscillation sampled at 100 Hz (no anti-aliasing filter) appears at…",
+       "options":[
+         {"t":"90 Hz","why":"90 Hz is above Nyquist (50 Hz)."},
+         {"t":"10 Hz","why":"Right: 100 − 90 = 10 Hz. A fake alpha-like rhythm!"},
+         {"t":"190 Hz","why":"Nothing above 50 Hz can appear."},
+         {"t":"It is removed","why":"It folds back; it is not removed."}],
+       "answer":1,"explain":"Aliasing can create rhythms that look physiological. That's why anti-aliasing filters matter."},
+      {"id":"w01-c4","type":"mcq","concept":"sp.frequency","level":1,
+       "q":"Period of an 8 Hz theta/alpha-border wave?",
+       "options":[
+         {"t":"8 ms","why":"That is 125 Hz."},
+         {"t":"80 ms","why":"That is 12.5 Hz."},
+         {"t":"125 ms","why":"Right: 1000/8."},
+         {"t":"800 ms","why":"That is 1.25 Hz."}],
+       "answer":2,"explain":"Period = 1000/f ms."},
+      {"id":"w01-c5","type":"mcq","concept":"sp.superposition","level":1,
+       "q":"Two sources at the same frequency are recorded by one electrode with opposite phases and equal amplitude. The electrode shows…",
+       "options":[
+         {"t":"a large oscillation","why":"That needs them in phase."},
+         {"t":"little or nothing at that frequency","why":"Right: they cancel. Active sources can be invisible in the sum!"},
+         {"t":"double frequency","why":"Frequency is unchanged."},
+         {"t":"two separate peaks","why":"An electrode records one summed value per time point."}],
+       "answer":1,"explain":"No signal at an electrode ≠ no activity in the brain."},
+      {"id":"w01-c6","type":"mcq","concept":"sp.noise","level":1,
+       "q":"Noise amplitude is halved, signal unchanged. Amplitude SNR…",
+       "options":[
+         {"t":"doubles","why":"Right: signal / (noise/2) = 2 × the old ratio."},
+         {"t":"halves","why":"Less noise improves the ratio."},
+         {"t":"is unchanged","why":"The noise changed, so the ratio changes."},
+         {"t":"is multiplied by 4","why":"That's true for the power ratio, not amplitude."}],
+       "answer":0,"explain":"Amplitude SNR = S/N."},
+      {"id":"w01-c7","type":"mcq","concept":"sp.averaging","level":2,
+       "q":"From 16 to 64 trials, noise in the average is…",
+       "options":[
+         {"t":"divided by 4","why":"Noise follows √N: √64/√16 = 8/4 = 2."},
+         {"t":"divided by 2","why":"Right."},
+         {"t":"divided by 48","why":"No rule based on the difference."},
+         {"t":"unchanged","why":"More trials do reduce random noise."}],
+       "answer":1,"explain":"√N rule."},
+      {"id":"w01-c8","type":"mcq","concept":"en.hedge","level":2,
+       "q":"Which sentence makes the strongest claim?",
+       "options":[
+         {"t":"\"X may contribute to Y.\"","why":"\"May\" + \"contribute\" = doubly hedged."},
+         {"t":"\"X is consistent with Y.\"","why":"\"Consistent with\" = compatible, not causal."},
+         {"t":"\"X causes Y.\"","why":"Right: no hedge, and a causal claim."},
+         {"t":"\"X is a putative marker of Y.\"","why":"\"Putative\" = assumed, not proven."}],
+       "answer":2,"explain":"Rank claims by verb strength (causes > contributes > is associated with > is consistent with) and hedges."}
+    ],
+    "explain": [
+      {"id":"w01-c-x","type":"open","concept":"sp.averaging",
+       "q":"You record iEEG at 1000 Hz while showing 60 flashes. In 5–8 sentences, walk from the raw signal to an evoked response, and name what could go wrong at each step (sampling, noise, averaging)."}
+    ]
+  }
+}

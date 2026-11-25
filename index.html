@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Commute Coach</title>
+<meta name="theme-color" content="#0f1115">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Commute Coach">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#0f1115; --card:#181b22; --card2:#1f232c; --line:#2b303b;
+  --text:#e9ebf0; --muted:#9aa2b1; --accent:#7cc4ff; --accent2:#ffb86b;
+  --good:#5fd38d; --bad:#ff6b6b; --radius:16px;
+}
+*{box-sizing:border-box}
+html{font:-apple-system-body; -webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:1rem;line-height:1.5;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 90px);max-width:560px;margin:0 auto}
+h1{font-size:1.4rem;margin:.2em 0}
+h2{font-size:1.2rem;margin:.3em 0 .5em}
+h3{font-size:1.05rem;margin:.8em 0 .4em}
+p{margin:.55em 0}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+button{font:inherit;color:inherit;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{display:block;width:100%;padding:14px 16px;border-radius:14px;background:var(--card2);border:1px solid var(--line);font-weight:600;text-align:center;margin:8px 0}
+.btn.primary{background:var(--accent);color:#06121f;border:none;font-size:1.15rem;padding:18px}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5}
+.streak{font-size:1.1rem;font-weight:700}
+.tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--muted);margin-right:6px}
+.tag.acc{color:var(--accent);border-color:#2d4a63}
+.list .item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:8px}
+.list .item:last-child{border-bottom:none}
+.item button{background:none;color:var(--accent);font-weight:600;padding:6px 0}
+.bar{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.levels{display:flex;gap:4px;margin-top:6px}
+.levels span{flex:1;height:10px;border-radius:4px;background:var(--card2)}
+.levels span.on{background:var(--accent)}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(15,17,21,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;padding:14px 0;color:var(--muted);font-weight:600}
+nav button.on{color:var(--accent)}
+/* session */
+.top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.top .x{background:none;font-size:1.5rem;color:var(--muted);padding:4px 8px}
+.top .bar{flex:1;margin:0}
+.section{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent2);font-weight:700}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin:8px 0;border-radius:12px;background:var(--card2);border:1px solid var(--line)}
+.opt.good{border-color:var(--good);background:#16301f}
+.opt.bad{border-color:var(--bad);background:#341a1c}
+.opt .why{display:block;font-size:.88rem;color:var(--muted);margin-top:6px}
+.opt.good .why,.opt.bad .why{color:var(--text)}
+.verdict{font-weight:700;margin:10px 0 4px}
+.verdict.good{color:var(--good)} .verdict.bad{color:var(--bad)}
+.quote{border-left:3px solid var(--accent2);padding:8px 12px;background:var(--card2);border-radius:0 10px 10px 0;font-family:Georgia,"Times New Roman",serif;font-size:1.05rem}
+.precise{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:.93rem}
+.precise b:first-child{color:var(--accent2)}
+textarea{width:100%;min-height:140px;font:inherit;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+canvas{width:100%;display:block;background:#12151b;border-radius:12px;border:1px solid var(--line)}
+.slider{margin:10px 0}
+.slider label{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent);height:32px}
+.vlabel{font-size:.85rem;color:var(--muted);margin:6px 2px}
+.warn{color:var(--accent2);font-weight:600}
+.banner{background:#3a2a12;border:1px solid #6b4a1a;padding:10px 12px;border-radius:12px;font-size:.9rem}
+.big{font-size:2.6rem;font-weight:800;margin:.1em 0}
+.center{text-align:center}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div id="app"><p class="muted">Loading…</p></div>
+<nav id="nav">
+  <button data-v="home" class="on">Today</button>
+  <button data-v="progress">Progress</button>
+</nav>
+<script>
+"use strict";
+/* ---------- storage (never crashes) ---------- */
+const KEY = "commute-coach-v1";
+let memoryStore = null, storageOK = true;
+function loadState(){
+  let raw = null;
+  try { raw = window.localStorage.getItem(KEY); } catch(e){ storageOK = false; raw = memoryStore; }
+  try { const s = raw ? JSON.parse(raw) : null; if (s && s.v === 1) return s; } catch(e){}
+  return {v:1, done:{}, days:[], answers:[], open:[], sent:{answers:0, open:0}};
+}
+function saveState(){
+  const raw = JSON.stringify(S);
+  try { window.localStorage.setItem(KEY, raw); } catch(e){ storageOK = false; memoryStore = raw; }
+}
+let S = loadState();
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function today(d){ d = d || new Date(); const z = n => String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+function addDays(str, n){ const [y,m,d] = str.split("-").map(Number); return today(new Date(y, m-1, d+n)); }
+function markDay(){ const t = today(); if (!S.days.includes(t)) S.days.push(t); }
+function streak(){
+  const set = new Set(S.days); let d = today(), n = 0;
+  if (!set.has(d)) d = addDays(d, -1);
+  while (set.has(d)) { n++; d = addDays(d, -1); }
+  return n;
+}
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- content ---------- */
+let DIAG = null, WEEK = null, loadError = null;
+async function getJSON(url){ const r = await fetch(url, {cache:"no-cache"}); if (!r.ok) throw new Error(url+" "+r.status); return r.json(); }
+async function loadContent(){
+  try { [DIAG, WEEK] = await Promise.all([getJSON("content/diagnostic.json"), getJSON("content/current-week.json")]); }
+  catch(e){ loadError = e; }
+}
+function allUnits(){
+  const u = [];
+  if (DIAG) u.push({kind:"diag", id:DIAG.id, title:DIAG.title, data:DIAG});
+  if (WEEK) WEEK.sessions.forEach((s,i) => u.push({kind:"session", id:s.id, title:s.title, label:"Session "+(i+1), data:s}));
+  if (WEEK && WEEK.checkup) u.push({kind:"checkup", id:WEEK.checkup.id, title:WEEK.checkup.title, data:WEEK.checkup});
+  return u;
+}
+function nextUnit(){ return allUnits().find(u => !(S.done[u.id] && S.done[u.id].mode === "full")) || null; }
+
+/* ---------- build the step list for a unit ---------- */
+function buildSteps(unit, lazy){
+  const st = [], d = unit.data;
+  if (unit.kind === "diag" || unit.kind === "checkup"){
+    st.push({t:"intro", title:d.title, text:d.intro});
+    d.questions.forEach(q => st.push({t:"q", q, sec:unit.kind==="diag"?"Diagnostic":"Check-up", idk:unit.kind==="diag"}));
+    d.explain.forEach(q => st.push({t:"open", q, sec:"Explain it back"}));
+    return st;
+  }
+  d.warmup.forEach(q => st.push({t:"q", q, sec:"Warm-up"}));
+  if (lazy){ st.push({t:"q", q:d.practice[0], sec:"Quick practice"}); return st; }
+  st.push({t:"lesson", l:d.lesson, sec:"Mini-lesson"});
+  d.practice.forEach(q => st.push({t:"q", q, sec:"Practice"}));
+  st.push({t:"english", e:d.english, sec:"Academic English"});
+  d.english.q.forEach(q => st.push({t:"q", q, sec:"Academic English", quote:d.english.text, note:d.english.note}));
+  st.push({t:"open", q:d.explain, sec:"Explain it back"});
+  return st;
+}
+
+/* ---------- views ---------- */
+let view = "home", run = null;
+function setNav(v){ document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); $("#nav").classList.toggle("hidden", v === "run"); }
+function render(){
+  setNav(view);
+  if (view === "run") return renderStep();
+  if (view === "progress") return renderProgress();
+  if (view === "export") return renderExport();
+  renderHome();
+  window.scrollTo(0,0);
+}
+
+function renderHome(){
+  const n = streak(), u = nextUnit(), t = today();
+  const doneToday = S.days.includes(t);
+  let h = `<div class="row between"><h1>Commute Coach</h1><div class="streak">🔥 ${n} day${n===1?"":"s"}</div></div>`;
+  if (!storageOK) h += `<div class="banner">Your browser is not saving progress right now (private mode?). Use Backup on the Progress tab before closing.</div>`;
+  if (loadError) h += `<div class="card"><b>Couldn't load this week's content.</b><p class="muted small">Open the app once with a connection so it can save the week for offline use. (${esc(loadError.message)})</p></div>`;
+  if (u){
+    const mins = u.kind === "session" ? "10–15 min" : "≈15 min";
+    h += `<div class="card"><div class="section">${doneToday ? "Done today ✓ — one more?" : "Today's session"}</div>
+      <h2>${esc(u.title)}</h2><p class="muted small">${esc(u.label || (u.kind==="diag"?"Start here: find your level":"Weekly check-up"))} · ${mins}</p>
+      <button class="btn primary" id="start">Start</button>
+      ${u.kind === "session" ? `<button class="btn ghost" id="lazy">Lazy day · 3 min (keeps your streak)</button>` : ""}</div>`;
+  } else if (WEEK){
+    h += `<div class="card center"><div class="big">🎉</div><h2>Week ${WEEK.week} complete</h2><p class="muted">Paste your answers into the inbox and run your Sunday batch to get next week.</p></div>`;
+  }
+  if (WEEK){
+    h += `<div class="card"><h3>${esc(WEEK.title)}</h3><div class="list">` + allUnits().map(x => {
+      const d = S.done[x.id]; const mark = d ? (d.mode==="full" ? "✓" : "◐") : "";
+      return `<div class="item"><span>${mark ? `<b>${mark}</b> ` : ""}${esc(x.label ? x.label+": " : "")}${esc(x.title)}</span><button data-open="${x.id}">${d?"Redo":"Open"}</button></div>`;
+    }).join("") + `</div><p class="muted small">✓ done · ◐ lazy version done</p></div>`;
+  }
+  const pending = (S.answers.length - S.sent.answers) + (S.open.length - S.sent.open);
+  h += `<button class="btn" id="exp">📋 Copy my answers${pending ? ` (${pending} new)` : ""}</button>`;
+  $("#app").innerHTML = h;
+  if (u){ $("#start").onclick = () => startUnit(u, false); const lz = $("#lazy"); if (lz) lz.onclick = () => startUnit(u, true); }
+  document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => startUnit(allUnits().find(x => x.id === b.dataset.open), false));
+  $("#exp").onclick = () => { view = "export"; render(); };
+}
+
+function startUnit(unit, lazy){
+  run = {unit, lazy, steps:buildSteps(unit, lazy), i:0, correct:0, graded:0, answered:false};
+  view = "run"; render();
+}
+
+function renderStep(){
+  const r = run, s = r.steps[r.i];
+  const pct = Math.round(100 * r.i / r.steps.length);
+  let h = `<div class="top"><button class="x" id="quit" aria-label="Quit">✕</button><div class="bar"><i style="width:${pct}%"></i></div></div>`;
+  if (s.sec) h += `<div class="section">${esc(s.sec)}</div>`;
+  if (s.t === "intro"){
+    h += `<h2>${esc(s.title)}</h2><p>${esc(s.text)}</p><button class="btn primary" id="next">Begin</button>`;
+  } else if (s.t === "lesson"){
+    const l = s.l;
+    h += `<h2>${esc(l.title)}</h2>` + l.simple.map(p => `<p>${p}</p>`).join("");
+    if (l.visual) h += `<div id="vis"></div>`;
+    h += `<div class="precise"><b>The precise version is…</b> ${l.precise}</div>`;
+    if (l.takeaway) h += `<p><b>Remember:</b> ${esc(l.takeaway)}</p>`;
+    h += `<button class="btn primary" id="next">Next</button>`;
+  } else if (s.t === "english"){
+    h += `<h2>Decode this sentence</h2><div class="quote">${esc(s.e.text)}</div>
+      <p class="muted small">Read it twice. Ask yourself: what is actually claimed? What is hedged? Which word carries the claim?</p>
+      <button class="btn primary" id="next">I'm ready</button>`;
+  } else if (s.t === "q"){
+    const q = s.q;
+    if (s.quote) h += `<div class="quote small">${esc(s.quote)}</div>`;
+    if (q.type === "predict") h += `<span class="tag acc">Predict first</span>`;
+    h += `<h2>${esc(q.q)}</h2>`;
+    if (q.figure) h += `<div id="fig"></div>`;
+    // practice questions that refer to the lesson's sliders get the interactive visual again
+    const lessonVis = r.unit.kind === "session" && /slider/i.test(q.q) && r.unit.data.lesson.visual;
+    if (lessonVis) h += `<div id="vis"></div>`;
+    h += q.options.map((o,k) => `<button class="opt" data-k="${k}">${esc(o.t)}<span class="why hidden">${esc(o.why)}</span></button>`).join("");
+    if (s.idk) h += `<button class="btn ghost" id="idk">I don't know yet</button>`;
+    h += `<div id="fb"></div>`;
+  } else if (s.t === "open"){
+    h += `<h2>${esc(s.q.q)}</h2><p class="muted small">Your own words. English preferred; French is fine if the idea matters more. Graded on Sunday.</p>
+      <textarea id="ans" placeholder="Type here…"></textarea>
+      <button class="btn primary" id="save">Save answer</button><button class="btn ghost" id="skip">Skip</button>`;
+  } else if (s.t === "end"){
+    h += endHTML();
+  }
+  $("#app").innerHTML = h;
+  window.scrollTo(0,0);
+  $("#quit").onclick = () => { if (confirm("Leave this session? Answers so far are saved.")) { view = "home"; render(); } };
+  const nx = $("#next"); if (nx) nx.onclick = next;
+  if (s.t === "lesson" && s.l.visual) drawVisual($("#vis"), s.l.visual, true);
+  if (s.t === "q"){
+    if (s.q.figure) drawVisual($("#fig"), s.q.figure, false);
+    const v = $("#vis"); if (v) drawVisual(v, r.unit.data.lesson.visual, true);
+    document.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(+b.dataset.k));
+    const idk = $("#idk"); if (idk) idk.onclick = () => answer(-1);
+  }
+  if (s.t === "open"){
+    $("#save").onclick = () => {
+      const txt = $("#ans").value.trim();
+      if (!txt){ $("#ans").focus(); return; }
+      S.open.push({sid:r.unit.id, qid:s.q.id, concept:s.q.concept, q:s.q.q, text:txt, date:today()}); saveState(); next();
+    };
+    $("#skip").onclick = next;
+  }
+  if (s.t === "end") bindEnd();
+}
+
+function answer(k){
+  const r = run, s = r.steps[r.i], q = s.q;
+  if (r.answered) return; r.answered = true;
+  const ok = k === q.answer;
+  r.graded++; if (ok) r.correct++;
+  S.answers.push({sid:r.unit.id, qid:q.id, concept:q.concept, level:q.level||null, result: k === -1 ? "idk" : (ok ? "ok" : "wrong"), date:today()});
+  saveState();
+  document.querySelectorAll(".opt").forEach(b => {
+    const j = +b.dataset.k; b.disabled = true;
+    b.querySelector(".why").classList.remove("hidden");
+    if (j === q.answer) b.classList.add("good"); else if (j === k) b.classList.add("bad");
+  });
+  const idk = $("#idk"); if (idk) idk.remove();
+  const verdict = k === -1 ? `<div class="verdict">Noted — that's useful to know.</div>` :
+    ok ? `<div class="verdict good">${["Correct!","Nice.","Exactly.","Yes!"][r.graded % 4]}</div>` : `<div class="verdict bad">Not quite — read why below each option.</div>`;
+  $("#fb").innerHTML = verdict + `<p>${esc(q.explain || "")}</p>` + (s.note ? `<p class="muted small">${esc(s.note)}</p>` : "") + `<button class="btn primary" id="next">Next</button>`;
+  $("#next").onclick = next;
+  $("#fb").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function next(){
+  const r = run; r.answered = false; r.i++;
+  if (r.i >= r.steps.length){
+    const prev = S.done[r.unit.id];
+    const mode = r.lazy ? "lazy" : "full";
+    if (!prev || prev.mode !== "full") S.done[r.unit.id] = {mode, date:today()};
+    markDay(); saveState();
+    r.steps.push({t:"end"});
+  }
+  renderStep();
+}
+
+function endHTML(){
+  const r = run, n = streak();
+  return `<div class="center"><div class="big">${r.lazy ? "⚡" : "🎉"}</div><h2>${r.lazy ? "Lazy day done — streak kept!" : "Session complete!"}</h2>
+    ${r.graded ? `<p>${r.correct} / ${r.graded} correct</p>` : ""}<p class="streak">🔥 ${n}-day streak</p>
+    <p class="muted small">${r.lazy ? "The full session stays waiting for you tomorrow." : "Your typed answers are saved for Sunday."}</p></div>
+    <button class="btn primary" id="home">Back to home</button>`;
+}
+function bindEnd(){ $("#home").onclick = () => { view = "home"; render(); }; }
+
+/* ---------- progress ---------- */
+function renderProgress(){
+  const L = (WEEK && WEEK.levels) || {};
+  const areas = [
+    ["Signal processing", L.signal], ["Academic English", L.english],
+    ["Neuroanatomy & networks", null], ["Statistics", null], ["Consciousness theories", null], ["Research methods", null]];
+  const lv = v => `<div class="levels">${[1,2,3,4,5].map(i => `<span class="${v && i <= v ? "on" : ""}"></span>`).join("")}</div>`;
+  let h = `<h1>Progress</h1><div class="card"><div class="row between"><span>Streak</span><b>🔥 ${streak()} day${streak()===1?"":"s"}</b></div>
+    <div class="row between"><span>Active days</span><b>${S.days.length}</b></div>
+    <div class="row between"><span>Sessions done</span><b>${Object.values(S.done).filter(d => d.mode==="full").length}</b></div></div>`;
+  h += `<div class="card"><h3>Levels per area (1–5)</h3>` + areas.map(([name, v]) =>
+    `<div style="margin:10px 0"><div class="row between"><span>${name}</span><span class="muted small">${v ? "Level "+v : "Phase 2"}</span></div>${lv(v)}</div>`).join("") +
+    `<p class="muted small">Levels are updated each Sunday from your answers.</p></div>`;
+  // per-concept accuracy from local answers
+  const by = {};
+  S.answers.forEach(a => { if (!a.concept) return; const c = by[a.concept] = by[a.concept] || {ok:0,n:0}; c.n++; if (a.result==="ok") c.ok++; });
+  const keys = Object.keys(by).sort();
+  h += `<div class="card"><h3>Concepts practised</h3>` + (keys.length ? keys.map(k => {
+    const p = Math.round(100*by[k].ok/by[k].n);
+    return `<div style="margin:8px 0"><div class="row between small"><span>${esc(k)}</span><span class="muted">${by[k].ok}/${by[k].n} · ${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div></div>`;
+  }).join("") : `<p class="muted">Nothing yet — start the diagnostic!</p>`) + `</div>`;
+  h += `<div class="card"><h3>Backup &amp; restore</h3>
+    <p class="muted small">Safari can erase website data if you don't open the app for a while. Make a backup code every Sunday and keep it in your notes.</p>
+    <button class="btn" id="bk">Make backup code</button><button class="btn ghost" id="rs">Restore from a code</button><div id="bkbox"></div></div>`;
+  $("#app").innerHTML = h;
+  $("#bk").onclick = () => {
+    const code = "CC1:" + btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+    $("#bkbox").innerHTML = `<textarea id="bkt" readonly>${esc(code)}</textarea><button class="btn primary" id="bkc">Copy code</button><p class="muted small" id="bkm"></p>`;
+    $("#bkc").onclick = () => copyText(code, $("#bkt"), $("#bkm"));
+  };
+  $("#rs").onclick = () => {
+    $("#bkbox").innerHTML = `<textarea id="rst" placeholder="Paste your CC1:… code here"></textarea><button class="btn primary" id="rsg">Restore</button><p class="small" id="rsm"></p>`;
+    $("#rsg").onclick = () => {
+      try {
+        const c = $("#rst").value.trim(); if (!c.startsWith("CC1:")) throw 0;
+        const s = JSON.parse(decodeURIComponent(escape(atob(c.slice(4)))));
+        if (!s || s.v !== 1 || !Array.isArray(s.days)) throw 0;
+        if (!confirm("Replace the progress on this phone with the backup?")) return;
+        S = s; saveState(); $("#rsm").textContent = "Restored ✓"; setTimeout(() => { view="home"; render(); }, 700);
+      } catch(e){ $("#rsm").textContent = "That code doesn't look right. Copy the whole code, starting with CC1:"; }
+    };
+  };
+}
+
+/* ---------- export answers ---------- */
+function exportText(){
+  const A = S.answers.slice(S.sent.answers), O = S.open.slice(S.sent.open);
+  let t = `## Commute Coach export — ${today()}\nStreak: ${streak()} day(s) · Active days: ${S.days.length}\n`;
+  const sids = [...new Set([...A.map(a => a.sid), ...O.map(o => o.sid)])];
+  sids.forEach(sid => {
+    const a = A.filter(x => x.sid === sid), o = O.filter(x => x.sid === sid);
+    const ok = a.filter(x => x.result === "ok").length, idk = a.filter(x => x.result === "idk").length;
+    const d = S.done[sid];
+    t += `\n### ${sid}${d ? ` (${d.mode}, ${d.date})` : " (in progress)"}\nScore: ${ok}/${a.length}${idk ? ` · don't know: ${idk}` : ""}\n`;
+    a.forEach(x => { t += `- ${x.result === "ok" ? "✓" : x.result === "idk" ? "?" : "✗"} ${x.qid} [${x.concept}${x.level ? " L"+x.level : ""}] ${x.date}\n`; });
+    o.forEach(x => { t += `\n**Explain-back ${x.qid} [${x.concept}]** — ${x.q}\n> ${x.text.replace(/\n/g, "\n> ")}\n`; });
+  });
+  if (!sids.length) t += "\n(No new answers since the last export.)\n";
+  return t;
+}
+function renderExport(){
+  const t = exportText();
+  $("#app").innerHTML = `<div class="top"><button class="x" id="back">←</button><h2 style="margin:0">Copy my answers</h2></div>
+    <p class="muted small">Copy this text, send it to your computer (note or email to yourself), and paste it into <b>feedback/inbox.md</b>.</p>
+    <textarea id="ex" readonly style="min-height:260px">${esc(t)}</textarea>
+    <button class="btn primary" id="cp">Copy</button><p class="small muted" id="cpm"></p>
+    <button class="btn ghost" id="sent">I've pasted it — clear this list</button>`;
+  $("#back").onclick = () => { view = "home"; render(); };
+  $("#cp").onclick = () => copyText(t, $("#ex"), $("#cpm"));
+  $("#sent").onclick = () => {
+    if (!confirm("Mark these answers as sent? They won't appear in the next export.")) return;
+    S.sent = {answers:S.answers.length, open:S.open.length}; saveState(); view = "home"; render();
+  };
+}
+function copyText(text, box, msg){
+  const fallback = () => {
+    try { box.removeAttribute("readonly"); box.focus(); box.select(); box.setSelectionRange(0, text.length); const ok = document.execCommand("copy"); box.setAttribute("readonly",""); if (ok){ msg.textContent = "Copied ✓"; return; } } catch(e){}
+    msg.textContent = "Couldn't copy automatically: press and hold in the box, then Select All → Copy.";
+  };
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(() => msg.textContent = "Copied ✓", fallback);
+  } else fallback();
+}
+
+/* ---------- visuals (canvas + sliders) ---------- */
+const SLIDERS = {
+  f:{label:"Frequency", min:1, max:40, step:1, unit:" Hz"},
+  a:{label:"Amplitude", min:0.2, max:1.5, step:0.1, unit:""},
+  phase:{label:"Phase", min:0, max:360, step:15, unit:"°"},
+  fs:{label:"Sampling rate (fs)", min:3, max:100, step:1, unit:" Hz"},
+  f2:{label:"Wave 2 frequency", min:1, max:40, step:1, unit:" Hz"},
+  a2:{label:"Wave 2 amplitude", min:0, max:1, step:0.1, unit:""},
+  phase2:{label:"Wave 2 phase", min:0, max:360, step:15, unit:"°"},
+  noise:{label:"Noise level", min:0, max:3, step:0.1, unit:""},
+  trials:{label:"Number of trials averaged (N)", min:1, max:200, step:1, unit:""}
+};
+function drawVisual(host, spec, interactive){
+  const p = Object.assign({}, spec);
+  host.innerHTML = `<canvas></canvas><div class="vlabel"></div>` +
+    (interactive && p.sliders ? p.sliders.map(k => { const s = SLIDERS[k];
+      return `<div class="slider"><label><span>${s.label}</span><b data-val="${k}"></b></label><input type="range" data-k="${k}" min="${s.min}" max="${s.max}" step="${s.step}" value="${p[k]}"></div>`; }).join("") : "");
+  const cv = host.querySelector("canvas"), lab = host.querySelector(".vlabel");
+  const tall = p.kind === "sum";
+  const draw = () => {
+    host.querySelectorAll("[data-val]").forEach(el => { const k = el.dataset.val; el.textContent = p[k] + SLIDERS[k].unit; });
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth || 340, H = tall ? 260 : 170;
+    cv.width = W*dpr; cv.height = H*dpr; cv.style.height = H+"px";
+    const g = cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+    VIS[p.kind](g, W, H, p, lab);
+  };
+  host.querySelectorAll("input[type=range]").forEach(inp => inp.oninput = () => { p[inp.dataset.k] = +inp.value; draw(); });
+  requestAnimationFrame(draw);
+}
+const COL = {grid:"#2b303b", axis:"#59606e", txt:"#9aa2b1", a:"#7cc4ff", b:"#ffb86b", c:"#5fd38d", faint:"#4a5160"};
+function frame(g, W, H, opt){
+  // opt: x0,x1 (data), ticks, y range, unit
+  const L = 30, R = 8, T = opt.top || 8, B = opt.bottom || 22;
+  const X = x => L + (x - opt.x0) / (opt.x1 - opt.x0) * (W - L - R);
+  const Y = y => T + (1 - (y - opt.y0) / (opt.y1 - opt.y0)) * (H - T - B);
+  g.font = "11px -apple-system,sans-serif"; g.fillStyle = COL.txt; g.strokeStyle = COL.grid; g.lineWidth = 1;
+  (opt.ticks || []).forEach(t => { g.beginPath(); g.moveTo(X(t), T); g.lineTo(X(t), H - B); g.stroke(); if (!opt.noLabels) g.fillText(t + (opt.xunit||""), X(t) - 10, H - 6); });
+  g.strokeStyle = COL.axis; g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke();
+  return {X, Y};
+}
+function line(g, xs, ys, X, Y, color, w, dash){
+  g.strokeStyle = color; g.lineWidth = w || 2; g.setLineDash(dash || []); g.beginPath();
+  xs.forEach((x,i) => { const px = X(x), py = Y(ys[i]); i ? g.lineTo(px,py) : g.moveTo(px,py); }); g.stroke(); g.setLineDash([]);
+}
+const range = (a, b, n) => Array.from({length:n}, (_, i) => a + (b - a) * i / (n - 1));
+const VIS = {
+  sine(g, W, H, p, lab){
+    const {X, Y} = frame(g, W, H, {x0:0, x1:1000, y0:-1.6, y1:1.6, ticks:[0,250,500,750,1000], xunit:""});
+    const t = range(0, 1000, 800);
+    if (p.phase) line(g, t, t.map(x => p.a*Math.sin(2*Math.PI*p.f*x/1000)), X, Y, COL.faint, 1.5, [4,4]);
+    line(g, t, t.map(x => p.a*Math.sin(2*Math.PI*p.f*x/1000 + p.phase*Math.PI/180)), X, Y, COL.a, 2.2);
+    lab.innerHTML = `Time in ms (0 → 1 s). ` + (p.sliders ? `Period = ${(1000/p.f).toFixed(1)} ms.` : "") + (p.phase ? ` Dashed = same wave at 0° phase.` : "");
+  },
+  sampling(g, W, H, p, lab){
+    const {X, Y} = frame(g, W, H, {x0:0, x1:1000, y0:-1.4, y1:1.4, ticks:[0,250,500,750,1000]});
+    const t = range(0, 1000, 800);
+    line(g, t, t.map(x => Math.sin(2*Math.PI*p.f*x/1000)), X, Y, COL.faint, 1.5);
+    const n = Math.floor(p.fs) + 1, ts = Array.from({length:n}, (_, i) => i*1000/p.fs).filter(x => x <= 1000);
+    const ys = ts.map(x => Math.sin(2*Math.PI*p.f*x/1000));
+    line(g, ts, ys, X, Y, COL.b, 2);
+    g.fillStyle = COL.a; ts.forEach((x,i) => { g.beginPath(); g.arc(X(x), Y(ys[i]), 3.5, 0, 7); g.fill(); });
+    const alias = p.fs <= 2*p.f;
+    lab.innerHTML = `Grey = true ${p.f} Hz wave. Dots = samples. Orange = what the computer \"sees\". Nyquist = fs/2 = ${p.fs/2} Hz.` + (alias ? ` <span class="warn">fs ≤ 2 × ${p.f} Hz → aliasing!</span>` : "");
+  },
+  sum(g, W, H, p, lab){
+    const t = range(0, 1000, 900), rowH = H/3;
+    const w1 = t.map(x => p.a1*Math.sin(2*Math.PI*p.f1*x/1000));
+    const w2 = t.map(x => p.a2*Math.sin(2*Math.PI*p.f2*x/1000 + p.phase2*Math.PI/180));
+    const sm = w1.map((v,i) => v + w2[i]);
+    [[w1, COL.a, "Wave 1 ("+p.f1+" Hz)"], [w2, COL.b, "Wave 2"], [sm, COL.c, "Sum (what the electrode records)"]].forEach(([ys, c, name], r) => {
+      g.save(); g.translate(0, r*rowH);
+      const {X, Y} = frame(g, W, rowH, {x0:0, x1:1000, y0:-2.1, y1:2.1, ticks:[0,500,1000], noLabels:true, top:14, bottom:4});
+      line(g, t, ys, X, Y, c, 2); g.fillStyle = COL.txt; g.fillText(name, 34, 11); g.restore();
+    });
+    lab.textContent = "Each row shows 1 second. Bottom row = top + middle, point by point.";
+  },
+  noise(g, W, H, p, lab){
+    const {X, Y} = frame(g, W, H, {x0:0, x1:1000, y0:-4, y1:4, ticks:[0,250,500,750,1000]});
+    const t = range(0, 1000, 500), rnd = mulberry32(3);
+    const nz = t.map(() => { let s = 0; for (let k = 0; k < 6; k++) s += rnd() - .5; return s / Math.sqrt(.5); }); // ~N(0,1)
+    const clean = t.map(x => Math.sin(2*Math.PI*p.f*x/1000));
+    line(g, t, clean.map((v,i) => v + p.noise*nz[i]), X, Y, COL.a, 1.4);
+    line(g, t, clean, X, Y, COL.b, 2, [5,4]);
+    lab.innerHTML = `Blue = recording (signal + noise). Dashed orange = the true ${p.f} Hz signal. ` + (p.noise ? `Amplitude SNR ≈ ${(1/p.noise).toFixed(1)}.` : "No noise.");
+  },
+  average(g, W, H, p, lab){
+    const D = avgData(p.seed || 1, p.noise);
+    const {X, Y} = frame(g, W, H, {x0:-100, x1:500, y0:-4, y1:4, ticks:[0,100,200,300,400], xunit:""});
+    const N = Math.max(1, Math.min(200, Math.round(p.trials)));
+    const avg = D.cum[N-1].map(v => v / N);
+    if (p.sliders) line(g, D.t, D.trials[0], X, Y, COL.faint, 1);
+    line(g, D.t, avg, X, Y, COL.a, 2.2);
+    line(g, D.t, D.erp, X, Y, COL.b, 1.8, [5,4]);
+    lab.innerHTML = p.sliders ? `Time (ms) after stimulus at 0. Grey = one trial. Blue = average of <b>${N}</b> trial${N>1?"s":""}. Dashed = true response. Noise in the average ≈ 1/√${N} = ${(1/Math.sqrt(N)).toFixed(2)} of one trial's.`
+      : `Average of ${N} trials. Time in ms after the stimulus (at 0). Positive up. Dashed = true response.`;
+  }
+};
+const _avgCache = {};
+function avgData(seed, noise){
+  const key = seed + ":" + noise; if (_avgCache[key]) return _avgCache[key];
+  const t = range(-100, 500, 301), rnd = mulberry32(seed * 9973);
+  const erp = t.map(x => -1.6*Math.exp(-(((x-100)/22)**2)) + 2.0*Math.exp(-(((x-200)/38)**2)));
+  const trials = [], cum = []; let acc = t.map(() => 0);
+  for (let k = 0; k < 200; k++){
+    // "brain-like" noise: sum of random-phase sines 2–40 Hz, scaled
+    const comps = Array.from({length:12}, () => ({f:2 + rnd()*38, ph:rnd()*6.283, a:1/(1 + rnd()*3)}));
+    const norm = Math.sqrt(comps.reduce((s,c) => s + c.a*c.a/2, 0));
+    const tr = t.map((x,i) => erp[i] + noise*0.5*comps.reduce((s,c) => s + c.a*Math.sin(2*Math.PI*c.f*x/1000 + c.ph), 0)/norm);
+    trials.push(tr); acc = acc.map((v,i) => v + tr[i]); cum.push(acc.slice());
+  }
+  return (_avgCache[key] = {t, erp, trials, cum});
+}
+
+/* ---------- boot ---------- */
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => { view = b.dataset.v; render(); });
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+loadContent().then(render);
+</script>
+</body>
+</html>
